@@ -45,6 +45,7 @@ class LoginThemePluginProvider extends ServiceProvider
                 }
 
                 .fi-simple-page {
+                    overflow: hidden;
                     background: rgba(255, 255, 255, 0.06) !important;
                     backdrop-filter: blur(24px) saturate(160%);
                     -webkit-backdrop-filter: blur(24px) saturate(160%);
@@ -53,6 +54,13 @@ class LoginThemePluginProvider extends ServiceProvider
                     box-shadow:
                         0 8px 40px rgba(0, 0, 0, 0.5),
                         0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+                }
+
+                /* Filament gives this inner wrapper its own opaque background,
+                   which otherwise pokes out past .fi-simple-page's rounded
+                   corners and reads as a second, mismatched box. */
+                .fi-simple-page-content {
+                    background: transparent !important;
                 }
 
                 .fi-simple-header-heading {
