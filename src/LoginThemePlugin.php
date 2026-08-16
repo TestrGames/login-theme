@@ -36,11 +36,17 @@ class LoginThemePlugin implements HasPluginSettings, Plugin
                 ->label('Accent color')
                 ->default(fn () => config('login-theme.accent_color')),
             TextInput::make('background_image_url')
-                ->label('Background image URL')
+                ->label('Side panel background image URL')
                 ->url()
                 ->placeholder('https://example.com/your-background.jpg')
                 ->helperText('Leave blank to use the built-in animated gradient instead.')
                 ->default(fn () => config('login-theme.background_image_url')),
+            TextInput::make('side_panel_heading')
+                ->label('Side panel heading')
+                ->default(fn () => config('login-theme.side_panel_heading')),
+            TextInput::make('side_panel_tagline')
+                ->label('Side panel tagline')
+                ->default(fn () => config('login-theme.side_panel_tagline')),
         ];
     }
 
@@ -49,6 +55,12 @@ class LoginThemePlugin implements HasPluginSettings, Plugin
         $this->writeToEnvironment([
             'LOGINTHEME_ACCENT_COLOR' => filled($data['accent_color'] ?? null) ? $data['accent_color'] : '#6366f1',
             'LOGINTHEME_BACKGROUND_IMAGE_URL' => $data['background_image_url'] ?? '',
+            'LOGINTHEME_SIDE_PANEL_HEADING' => filled($data['side_panel_heading'] ?? null)
+                ? $data['side_panel_heading']
+                : 'Manage your servers with ease.',
+            'LOGINTHEME_SIDE_PANEL_TAGLINE' => filled($data['side_panel_tagline'] ?? null)
+                ? $data['side_panel_tagline']
+                : 'Everything you need to run your game servers, in one place.',
         ]);
 
         Notification::make()

@@ -1,8 +1,9 @@
 # Login Theme
 
 A [Pelican Panel](https://pelican.dev) plugin that restyles just the login
-screen — modern glassmorphism card, animated gradient background — without
-touching the rest of the panel's look.
+screen — a split layout with a decorative gradient panel on one side and a
+clean, borderless login form on the other — without touching the rest of
+the panel's look.
 
 [![Latest release](https://img.shields.io/github/v/release/TestrGames/login-theme?label=release)](https://github.com/TestrGames/login-theme/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -10,11 +11,15 @@ touching the rest of the panel's look.
 ## What it does
 
 Out of the box, Pelican's login screen is a plain card on a flat black
-background. This plugin swaps that for:
+background. This plugin replaces that with a two-column layout:
 
-- A soft, slowly-drifting animated gradient background
-- A frosted-glass login card (blurred, translucent, subtle border and glow)
-- A gradient-tinted heading
+- **Left** — a decorative panel: a soft, slowly-drifting animated gradient
+  (or your own background image), a heading, and a tagline
+- **Right** — the login form itself, flat and borderless on a clean dark
+  background, with a gradient-tinted heading
+
+On narrower screens the decorative panel hides itself and the form takes
+the full width, so it still works fine on mobile.
 
 Nothing about the login *form* changes — same fields, same passkey/2FA
 support, same validation. This is styling only.
@@ -26,13 +31,13 @@ Pelican renders the same login page class for all of them.
 
 Admin → Plugins → Login Theme → Settings:
 
-- **Accent color** — tints the background glow, the heading, and the submit
+- **Accent color** — tints the gradient glow, the heading, and the submit
   button
-- **Background image URL** — set this to replace the animated gradient with
-  your own image entirely (a full-bleed cover background instead); leave it
-  blank to keep the gradient
+- **Side panel background image URL** — replaces the animated gradient on
+  the left panel with your own image; leave blank to keep the gradient
+- **Side panel heading** / **tagline** — the text shown on the left panel
 
-No code or redeploy needed for either — just save the settings page.
+No code or redeploy needed for any of these — just save the settings page.
 
 ## Install
 
@@ -41,7 +46,7 @@ No code or redeploy needed for either — just save the settings page.
 2. Admin → Plugins → **Import** → upload the zip
 3. `php artisan optimize:clear`
 4. Open the login screen (or Admin → Plugins → Login Theme → Settings to
-   customize the accent color / background image first)
+   customize colors/text/image first)
 
 ## Updating
 
@@ -76,20 +81,30 @@ delay that:
 - Pelican renders the login page for all three panels through one shared
   class, `App\Filament\Pages\Auth\Login` (its own subclass of Filament's
   base login page — adds OAuth buttons, passkeys, captcha, but no view
-  override). This plugin injects a `<style>` block scoped to exactly that
-  class via
-  `FilamentView::registerRenderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, ..., scopes: Login::class)`,
-  so the CSS is present on every login route (`/login`, `/admin/login`,
-  `/server/login`) and nowhere else.
-- Selectors target Filament's own simple-page layout classes:
-  `.fi-simple-layout` (full-page background), `.fi-simple-page` (the
-  card), `.fi-simple-header-heading` (the heading text). These come from
-  Filament's package views, not anything Pelican-specific, so a Filament
-  major-version upgrade is the main thing that could change them.
+  override). This plugin injects HTML/CSS scoped to exactly that class via
+  `FilamentView::registerRenderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, ..., scopes: Login::class)`.
+- `SIMPLE_LAYOUT_START` fires as the very first thing inside
+  `<div class="fi-simple-layout">`, immediately before the column that
+  holds the actual form (`.fi-simple-main-ctn`) — confirmed directly
+  against Filament's own
+  `packages/panels/resources/views/components/layout/simple.blade.php`.
+  That means the markup injected here becomes a real DOM sibling *before*
+  the form column, which is what makes the CSS flexbox split-screen layout
+  possible without touching any Blade view: `.fi-simple-layout` becomes
+  `display: flex`, the injected `.lt-side-panel` div is the first
+  (left) child, `.fi-simple-main-ctn` is the second (right) child.
+- The login form's own card background is made fully transparent
+  (`.fi-simple-page`, `.fi-simple-page-content`) rather than styled as a
+  translucent "glass" card — an earlier version tried a frosted-glass
+  look, but `.fi-simple-page-content` has an opaque background baked into
+  Filament's own CSS that peeked out past the rounded corners as a visible
+  second box. Making both fully transparent removes that seam instead of
+  fighting it.
 - Settings (`src/LoginThemePlugin.php`) use the same
   `HasPluginSettings` + `EnvironmentWriterTrait` pattern as other Pelican
-  plugins (e.g. `billing`, `subdomains`) — values are written to `.env` as
-  `LOGINTHEME_ACCENT_COLOR` / `LOGINTHEME_BACKGROUND_IMAGE_URL`, not a
+  plugins (e.g. `billing`, `subdomains`) — values are written to `.env`
+  (`LOGINTHEME_ACCENT_COLOR`, `LOGINTHEME_BACKGROUND_IMAGE_URL`,
+  `LOGINTHEME_SIDE_PANEL_HEADING`, `LOGINTHEME_SIDE_PANEL_TAGLINE`), not a
   database table.
 
 </details>
