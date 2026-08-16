@@ -1,0 +1,15 @@
+{
+    "id": "login-theme",
+    "name": "Login Theme",
+    "author": "Lisak",
+    "version": "1.0.0",
+    "description": "Restyles the login screen with a modern glassmorphism look and an animated gradient background -- swap in your own accent color or background image from the plugin's settings page, no code required.",
+    "category": "plugin",
+    "url": "https://github.com/TestrGames/login-theme",
+    "update_url": "https://raw.githubusercontent.com/TestrGames/login-theme/main/update.json",
+    "namespace": "Lisak\\LoginTheme",
+    "class": "LoginThemePlugin",
+    "panels": null,
+    "panel_version": null,
+    "composer_packages": null
+}
