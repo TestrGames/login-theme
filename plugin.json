@@ -2,7 +2,7 @@
     "id": "login-theme",
     "name": "Login Theme",
     "author": "Lisak",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Restyles the login screen as a split layout -- an animated gradient panel on one side, a clean borderless form on the other -- with accent color, background image, and copy all configurable from the plugin's settings page, no code required.",
     "category": "plugin",
     "url": "https://github.com/TestrGames/login-theme",
@@ -10,6 +10,7 @@
     "namespace": "Lisak\\LoginTheme",
     "class": "LoginThemePlugin",
     "panels": null,
+    "api_version": 1,
     "panel_version": null,
     "composer_packages": null
 }
